@@ -36,7 +36,6 @@ export default function Hero() {
     }
     const main = document.querySelector(".main");
     main?.addEventListener("mousemove", function (e) {
-      // console.log(e.clientX, e.clientY);
       const xMove = (e.clientX / innerWidth - 0.5) * 40;
       gsap.to(".imagediv .text", {
         x: `${xMove * 0.2}%`,
@@ -69,7 +68,7 @@ export default function Hero() {
       delay: -0.8,
       ease: "Expo.easeInOut",
     });
-    
+
     gsap.to(".char", {
       top: 10,
       duration: 2,
@@ -77,23 +76,23 @@ export default function Hero() {
       ease: "Expo.easeInOut",
     });
 
-    gsap.to('.logo',{
+    gsap.to(".logo", {
       top: 250,
       duration: 2,
       ease: "Expo.easeInOut",
     });
-    
+
     gsap.to(".brbar", {
-      bottom:80,
+      bottom: 80,
       duration: 2,
       ease: "Expo.easeInOut",
     });
-    
-    gsap.to('.theft',{
-      marginLeft:500,
+
+    gsap.to(".theft", {
+      marginLeft: 500,
       duration: 2,
       ease: "Expo.easeInOut",
-    })
+    });
   }, [showContent]);
 
   return (
@@ -172,7 +171,6 @@ export default function Hero() {
             </div>
             <div className="brbar relative bottom-0 w-full py-10 px-10 bg-gradient-to-t from-black to-transparent">
               <div className="brbr absolute inset-0">
-
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 flex gap-4 text-white text-2xl items-center">
                   <i className="ri-arrow-down-line"></i>
                   <h3 className="font-[Helvetica_Now_Display]">Scroll Down</h3>

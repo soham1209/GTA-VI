@@ -1,33 +1,62 @@
-// Loader.js
-import { useEffect } from "react";
-import gsap from "gsap";
+import React, { useEffect } from "react";
+import { gsap } from "gsap";
 
 export default function Loader({ finish, onComplete }) {
   useEffect(() => {
-    // intro animation (does NOT call onComplete)
-    const tl = gsap.timeline();
-    tl.to(".loader-text", { opacity: 1, duration: 0.8, ease: "power2.inOut" })
-      .to(".loader-bar", { width: "80%", duration: 1.6, ease: "power4.inOut" });
-    return () => tl.kill();
+    const tlIntro = gsap.timeline();
+    tlIntro.to(".loader", { autoAlpha: 1, duration: 1, ease: "expo.inOut" });
+
+    const tlContent = gsap.timeline({ repeat: -1, repeatDelay: 1, yoyo: true });
+    tlContent
+      .fromTo(
+        ".loader-text",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 1.5, ease:'expo.inOut' }
+      )
+      .to(
+        ".loader-bar",
+        { width: "80%", duration: 2, ease: "expo.inOut" },
+        "-=0.8"
+      );
+
+    return () => {
+      tlIntro.kill();
+      tlContent.kill();
+    };
   }, []);
 
   useEffect(() => {
     if (!finish) return;
-    // exit animation when finish becomes true
-    const tl = gsap.timeline({
+
+    // Exit animation when finish becomes true
+    const tlExit = gsap.timeline({
       onComplete: () => {
-        if (typeof onComplete === "function") onComplete();
+        if (typeof onComplete === "function") {
+          onComplete();
+        }
       },
     });
-    tl.to(".loader-bar", { width: "100%", duration: 0.6, ease: "power4.inOut" })
-      .to(".loader", { y: "-100%", duration: 0.8, ease: "power4.inOut" }, "+=0.1");
-    return () => tl.kill();
+
+    tlExit
+      .to(".loader-bar", { width: "100%", duration: 0, ease: "power4.inOut" })
+      .to(
+        ".loader",
+        { autoAlpha: 0, duration: .2, ease: "power4.inOut" },
+        "+=0.2"
+      );
+
+    return () => tlExit.kill();
   }, [finish, onComplete]);
 
   return (
-    <div className="loader fixed top-0 left-0 w-full h-screen bg-black flex flex-col justify-center items-center z-50">
-      <h1 className="loader-text text-white text-4xl opacity-0 mb-6">Loading...</h1>
-      <div className="loader-bar bg-yellow-500 h-2 w-0 rounded-full"></div>
+    <div className="loader fixed inset-0 bg-black h-screen flex flex-col justify-center items-center z-50 opacity-0">
+      <h1
+        className="loader-text text-white text-4xl mb-6 font-sans tracking-wide"
+        style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
+      >
+        Loading...
+      </h1>
+      <div className="loader-bar h-2 w-0 bg-yellow-500 rounded-full shadow-lg"></div>
     </div>
   );
 }
