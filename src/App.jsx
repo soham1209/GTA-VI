@@ -27,6 +27,7 @@ function App() {
       "/logo18.png",
       "/ps5.png",
       "/imag.png",
+      "/fonts/pricedown.woff2"
     ];
 
     const start = performance.now();
