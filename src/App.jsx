@@ -1,31 +1,75 @@
+// App.js
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
-
-import "./App.css";
 import Hero from "./Hero";
+import "./App.css";
+
+function preloadImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = src;
+    // resolve on load or error (so a broken image doesn't hang forever)
+    img.onload = () => resolve({ src, ok: true });
+    img.onerror = () => resolve({ src, ok: false });
+  });
+}
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);      // whether we show Loader component
+  const [finishLoader, setFinishLoader] = useState(false); // when Loader should play exit
+  const MIN_LOADER_MS = 1200; // guarantee loader visible for min time
 
   useEffect(() => {
-    const images = document.querySelectorAll("img");
-    let loadedCount = 0;
-    images.forEach((img) => {
-      if (img.complete) {
-        loadedCount++;
-      } else {
-        img.addEventListener("load", () => {
-          loadedCount++;
-          if (loadedCount === images.length) setLoading(false);
-        });
-      }
-    });
+    // list all hero images (use the same public paths you use in Hero)
+    const images = [
+      "/sky.png",
+      "/bg.png",
+      "/girlbg.png",
+      "/logo18.png",
+      "/ps5.png",
+      "/imag.png",
+      // add any more hero images here
+    ];
 
-    if (images.length === 0) setLoading(false);
+    const start = performance.now();
+
+    // create preload promises
+    const promises = images.map((src) => preloadImage(src));
+
+    // wait for all preloads OR a timeout fallback (e.g., 6s) to avoid infinite wait
+    const all = Promise.all(promises);
+    const timeout = new Promise((resolve) => setTimeout(resolve, 6000));
+
+    Promise.race([Promise.all([all, timeout]).then(() => {}), all])
+      .then(() => {
+        const elapsed = performance.now() - start;
+        const remaining = Math.max(0, MIN_LOADER_MS - elapsed);
+        // Wait remaining time to guarantee minimum loader visibility
+        setTimeout(() => {
+          // Signal Loader to play exit animation
+          setFinishLoader(true);
+        }, remaining);
+      })
+      .catch(() => {
+        // on unexpected error, still proceed to exit loader
+        setFinishLoader(true);
+      });
   }, []);
 
   return (
-    <>{loading ? <Loader onComplete={() => setLoading(false)} /> : <Hero />}</>
+    <>
+      {loading ? (
+        <Loader
+          finish={finishLoader}
+          onComplete={() => {
+            // hide loader only after exit animation completes
+            setLoading(false);
+          }}
+        />
+      ) : (
+        <Hero />
+      )}
+    </>
   );
 }
 
