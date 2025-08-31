@@ -41,7 +41,7 @@ export default function Loader({ finish, onComplete }) {
       .to(".loader-bar", { width: "100%", duration: 0, ease: "power4.inOut" })
       .to(
         ".loader",
-        { autoAlpha: 0, duration: .2, ease: "power4.inOut" },
+        { autoAlpha: 0, duration: .8, ease: "power4.inOut" },
         "+=0.2"
       );
 

@@ -18,7 +18,7 @@ function preloadImage(src) {
 function App() {
   const [loading, setLoading] = useState(true);      
   const [finishLoader, setFinishLoader] = useState(false); 
-  const MIN_LOADER_MS = 1; 
+  const MIN_LOADER_MS = 1000; 
   useEffect(() => {
     const images = [
       "/sky.png",
